@@ -2,6 +2,50 @@
 
 {% block content %}
     <h1>Events</h1>
+
+    <div class="row">
+        <div class="col-xs-6">
+            {% if prev != null %}
+                <a href="{{ prev }}">Previous</a>
+            {% else %}
+                <p>Previous</p>
+            {% endif %}
+        </div>
+        <div class="col-xs-5">
+            <a href="{{ path('homepage') }}"><button class="btn btn-info">Create</button></a>
+        </div>
+        <div class="col-xs-1">
+            {% if next != null %}
+                <a href="{{ next }}">Next</a>
+            {% else %}
+                <p>Next</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="row">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <td>Name</td>
+                <td>From</td>
+                <td>To</td>
+                <td></td>
+            </tr>
+            </thead>
+            <tbody>
+            {% for event in events %}
+                <tr>
+                    <td>{{ event.name }}</td>
+                    <td>{{ event.start_time | date('h:i:s A, l jS \\of F Y') }}</td>
+                    <td>{{ event.end_time | date('h:i:s A, l jS \\of F Y') }}</td>
+                    <td><a href="{{ path('homepage') }}"><button class="btn btn-info">Edit</button></a></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
 {% endblock content %}
 
 {% block endjavascripts %}
