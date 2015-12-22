@@ -11,10 +11,9 @@ namespace AppBundle\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 use OAuth2\Client;
-use OAuth2\GrantType\IGrantType;
-use OAuth2\GrantType\AuthorizationCode;
 
 class CoreController extends Controller {
 
@@ -23,40 +22,53 @@ class CoreController extends Controller {
      */
     public function indexAction(Request $request) {
 
-        /*
+        return $this->render('AppBundle:Core:index.html.twig', array('location' => 'home'));
+    }
+
+    /**
+     * @Route("/oauth", name="oauth")
+     */
+    public function oauthAction(Request $request) {
+
+        $client_test_token = $this->getParameter('oauth.test_token');
+        if($client_test_token != NULL) {
+
+            $session = $request->getSession();
+            $session->set('oauth_token', $client_test_token);
+
+            return $this->redirectToRoute('homepage');
+        }
+
         $client_id = $this->getParameter('oauth.client_id');
         $client_secret = $this->getParameter('oauth.client_secret');
-        $client_test_token = $this->getParameter('oauth.test_token');
         $base_url = $this->getParameter('oauth.base_url');
+        $send_url = $base_url . '/oauth/authorize';
 
         $client = new Client($client_id, $client_secret);
+        $redirectUrl = $request->getSchemeAndHttpHost() . $this->get('router')->generate('oauth_callback');
 
-        $client->setAccessToken($client_test_token);
-        $response = $client->fetch($base_url . '/api/v1/people');
+        $this->get('logger')->info("OAUTH hithere callback url: $redirectUrl");
+//        \Symfony\Component\VarDumper\VarDumper::dump($redirectUrl);
 
-        \Symfony\Component\VarDumper\VarDumper::dump($response);
-        */
 
-        /*
-        $client = new Client(CLIENT_ID, CLIENT_SECRET);
-        if (!isset($_GET['code'])) {
+        $authUrl = $client->getAuthenticationUrl($send_url, $redirectUrl);
 
-//            $auth_url = $client->getAuthenticationUrl(AUTHORIZATION_ENDPOINT, REDIRECT_URI);
-//            header('Location: ' . $auth_url);
-//            die('Redirect');
+        return new RedirectResponse($authUrl);
+    }
 
-        } else {
+    /**
+     * @Route("/oauth_callback", name="oauth_callback")
+     */
+    public function oauthCallbackAction(Request $request) {
 
-//            $params = array('code' => $_GET['code'], 'redirect_uri' => REDIRECT_URI);
-//            $response = $client->getAccessToken(TOKEN_ENDPOINT, 'authorization_code', $params);
-//            parse_str($response['result'], $info);
-//            $client->setAccessToken($info['access_token']);
-//            $response = $client->fetch('https://graph.facebook.com/me');
-//            var_dump($response, $response['result']);
-            
-        }*/
+        $input_query = $request->query->all();
+        if(array_key_exists('code', $input_query)) {
+            $session = $request->getSession();
+            $session->set('oauth_token', $input_query['code']);
+        }
 
-        // replace this example code with whatever you need
-        return $this->render('AppBundle:Core:index.html.twig', array('location' => 'home'));
+//        $this->get('logger')->info('OAUTH callback');
+
+        return $this->redirectToRoute('homepage');
     }
 }
