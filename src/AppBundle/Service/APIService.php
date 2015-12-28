@@ -17,6 +17,7 @@ use OAuth2\Client;
  */
 class APIService {
 
+    private $logger;
     private $client_id;
     private $client_secret;
     private $base_url;
@@ -25,7 +26,8 @@ class APIService {
     /**
      * APIService constructor.
      */
-    public function __construct($client_id, $client_secret, $base_url, $test_token) {
+    public function __construct($logger, $client_id, $client_secret, $base_url, $test_token) {
+        $this->logger = $logger;
         $this->client_id = $client_id;
         $this->client_secret = $client_secret;
         $this->base_url = $base_url;
@@ -44,6 +46,7 @@ class APIService {
     public function getData($session, $request, $api_call, $params) {
 
         if(!$session->has('oauth_token')) {
+            $this->logger->info("No oauth token found");
             return NULL;
         }
         $token = $session->get('oauth_token');
@@ -62,6 +65,7 @@ class APIService {
         $response = $client->fetch($send_url, $params);
 
         if($response['code'] === '200') {
+            $this->logger->info("Could not retrieve data. Response: " . json_encode($response));
             return NULL;
         }
         return $response['result'];

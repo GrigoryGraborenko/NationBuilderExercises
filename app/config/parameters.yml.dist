@@ -22,3 +22,4 @@ parameters:
     oauth.client_secret:    to_be_completed
     oauth.base_url:         to_be_completed
     oauth.test_token:       to_be_completed
+    nationbuilder.slug:     to_be_completed

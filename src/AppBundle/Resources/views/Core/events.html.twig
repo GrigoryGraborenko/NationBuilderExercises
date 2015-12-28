@@ -24,6 +24,7 @@
     </div>
 
     <div class="row">
+        {% if events is defined %}
         <table class="table table-striped">
             <thead>
             <tr>
@@ -34,16 +35,19 @@
             </tr>
             </thead>
             <tbody>
-            {% for event in events %}
-                <tr>
-                    <td>{{ event.name }}</td>
-                    <td>{{ event.start_time | date('h:i:s A, l jS \\of F Y') }}</td>
-                    <td>{{ event.end_time | date('h:i:s A, l jS \\of F Y') }}</td>
-                    <td><a href="{{ path('homepage') }}"><button class="btn btn-info">Edit</button></a></td>
-                </tr>
-            {% endfor %}
+                {% for event in events %}
+                    <tr>
+                        <td>{{ event.name }}</td>
+                        <td>{{ event.start_time | date('h:i:s A, l jS \\of F Y') }}</td>
+                        <td>{{ event.end_time | date('h:i:s A, l jS \\of F Y') }}</td>
+                        <td><a href="{{ path('homepage') }}"><button class="btn btn-info">Edit</button></a></td>
+                    </tr>
+                {% endfor %}
             </tbody>
         </table>
+        {% else %}
+            <h1>No events found</h1>
+        {% endif %}
     </div>
 
 {% endblock content %}

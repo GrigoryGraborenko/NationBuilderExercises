@@ -26,11 +26,12 @@ class EventController extends Controller {
         $output['prev'] = null;
 
         $api = $this->get('nationbuilder.api');
-        $result = $api->getData($request->getSession(), $request, '/api/v1/sites/peopledecide/pages/events', array('limit' => 10));
+        $slug = $this->getParameter('nationbuilder.slug');
+        $result = $api->getData($request->getSession(), $request, "/api/v1/sites/$slug/pages/events", array('limit' => 10));
 
         if($result !== NULL) {
 
-            \Symfony\Component\VarDumper\VarDumper::dump($result);
+//            \Symfony\Component\VarDumper\VarDumper::dump($result);
 
             $output['events'] = $result['results'];
             if($result['next'] != null) {
@@ -39,6 +40,8 @@ class EventController extends Controller {
             if($result['prev'] != null) {
                 $output['prev'] = "/events?" . parse_url($result['prev'])['query'];
             }
+        } else {
+            $this->get('logger')->info("Could not retrieve events");
         }
 
         return $this->render('AppBundle:Core:events.html.twig', $output);

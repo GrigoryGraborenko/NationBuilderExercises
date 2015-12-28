@@ -33,6 +33,8 @@ class CoreController extends Controller {
         $client_test_token = $this->getParameter('oauth.test_token');
         if($client_test_token != NULL) {
 
+            $this->get('logger')->info("Authenticating with test token");
+
             $session = $request->getSession();
             $session->set('oauth_token', $client_test_token);
 
@@ -47,11 +49,9 @@ class CoreController extends Controller {
         $client = new Client($client_id, $client_secret);
         $redirectUrl = $request->getSchemeAndHttpHost() . $this->get('router')->generate('oauth_callback');
 
-        $this->get('logger')->info("OAUTH hithere callback url: $redirectUrl");
-//        \Symfony\Component\VarDumper\VarDumper::dump($redirectUrl);
-
-
         $authUrl = $client->getAuthenticationUrl($send_url, $redirectUrl);
+
+        $this->get('logger')->info("Redirecting to $authUrl");
 
         return new RedirectResponse($authUrl);
     }
@@ -61,13 +61,14 @@ class CoreController extends Controller {
      */
     public function oauthCallbackAction(Request $request) {
 
+        $this->get('logger')->info("Redirected successfully");
+
         $input_query = $request->query->all();
         if(array_key_exists('code', $input_query)) {
             $session = $request->getSession();
             $session->set('oauth_token', $input_query['code']);
+            $this->get('logger')->info("Oauth token set successfully");
         }
-
-//        $this->get('logger')->info('OAUTH callback');
 
         return $this->redirectToRoute('homepage');
     }
