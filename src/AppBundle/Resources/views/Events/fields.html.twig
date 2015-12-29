@@ -1,0 +1,28 @@
+<div>
+
+    <div class="form-group">
+        <label for="event-name">Name</label>
+        <input type="text" class="form-control" id="event-name" name="name" placeholder="Name" {% if event.name is defined %}value="{{ event.name }}"{% endif %}>
+    </div>
+    <div class="form-group">
+        <label for="event-headline">Headline</label>
+        <input type="text" class="form-control" id="event-headline" name="headline" placeholder="Headline" {% if event.headline is defined %}value="{{ event.headline }}"{% endif %}>
+    </div>
+    <div class="form-group">
+        <label for="event-title">Title</label>
+        <input type="text" class="form-control" id="event-title" name="title" placeholder="Title" {% if event.title is defined %}value="{{ event.title }}"{% endif %}>
+    </div>
+    <div class="form-group">
+        <label for="event-intro">Introduction</label>
+        <textarea class="form-control" rows="4" id="event-intro" name="intro" placeholder="Introduction">{% if event.intro is defined %}{{ event.intro }}{% endif %}</textarea>
+    </div>
+    <div class="form-group">
+        <label for="event-start">Start Time</label>
+        <input type="text" class="form-control" id="event-start" name="start_time" placeholder="Start Time" {% if event.start_time is defined %}value="{{ event.start_time }}"{% endif %}>
+    </div>
+    <div class="form-group">
+        <label for="event-end">End Time</label>
+        <input type="text" class="form-control" id="event-end" name="end_time" placeholder="End Time" {% if event.end_time is defined %}value="{{ event.end_time }}"{% endif %}>
+    </div>
+
+</div>

@@ -12,7 +12,7 @@
             {% endif %}
         </div>
         <div class="col-xs-5">
-            <a href="{{ path('homepage') }}"><button class="btn btn-info">Create</button></a>
+            <a href="{{ path('create_event_form') }}"><button class="btn btn-info">Create</button></a>
         </div>
         <div class="col-xs-1">
             {% if next != null %}
@@ -40,7 +40,10 @@
                         <td>{{ event.name }}</td>
                         <td>{{ event.start_time | date('h:i:s A, l jS \\of F Y') }}</td>
                         <td>{{ event.end_time | date('h:i:s A, l jS \\of F Y') }}</td>
-                        <td><a href="{{ path('homepage') }}"><button class="btn btn-info">Edit</button></a></td>
+                        <td>
+                            <a href="{{ path('edit_event_form', { id: event.id }) }}"><button class="btn btn-info">Edit</button></a>
+                            <a href="{{ path('delete_event', { id: event.id }) }}"><button class="btn btn-danger">Delete</button></a>
+                        </td>
                     </tr>
                 {% endfor %}
             </tbody>
