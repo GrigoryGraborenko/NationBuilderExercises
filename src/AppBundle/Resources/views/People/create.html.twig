@@ -1,0 +1,19 @@
+{% extends "::base.html.twig" %}
+
+{% block content %}
+    <h1>New Person</h1>
+
+    <div class="row">
+
+        <form action="{{ path('create_person') }}" method="post">
+            {% set email_status = "" %}
+            {{ include('AppBundle:People:fields.html.twig') }}
+            <button class="btn btn-danger" type="submit">Create</button>
+        </form>
+
+    </div>
+
+{% endblock content %}
+
+{% block endjavascripts %}
+{% endblock %}

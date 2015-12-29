@@ -1,0 +1,18 @@
+{% extends "::base.html.twig" %}
+
+{% block content %}
+    <h1>Edit Person</h1>
+
+    <div class="row">
+
+        <form action="{{ path('edit_person', { id: person.id }) }}" method="post">
+            {% set email_status = "disabled" %}
+            {{ include('AppBundle:People:fields.html.twig') }}
+            <button class="btn btn-danger" type="submit">Save</button>
+        </form>
+    </div>
+
+{% endblock content %}
+
+{% block endjavascripts %}
+{% endblock %}

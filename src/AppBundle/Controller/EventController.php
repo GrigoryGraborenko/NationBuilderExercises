@@ -60,10 +60,6 @@ class EventController extends Controller {
 
         if($result === NULL) {
             $this->get('logger')->info("Could not delete event #$id");
-//            return $this->render('AppBundle:Core:index.html.twig', array('location' => 'home'));
-
-//            $this->getSession()->
-//            return $this->redirectToRoute('events');
         }
 
         return $this->redirectToRoute('events');

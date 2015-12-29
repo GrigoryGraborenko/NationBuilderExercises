@@ -1,0 +1,36 @@
+<div>
+
+    <div class="form-group">
+        <label for="person-first-name">First Name</label>
+        <input type="text" class="form-control" id="person-first-name" name="first_name" placeholder="First Name" {% if person.first_name is defined %}value="{{ person.first_name }}"{% endif %}>
+    </div>
+    <div class="form-group">
+        <label for="person-last-name">Last Name</label>
+        <input type="text" class="form-control" id="person-last-name" name="last_name" placeholder="Last Name" {% if person.last_name is defined %}value="{{ person.last_name }}"{% endif %}>
+    </div>
+    <div class="form-group">
+        <label for="person-email">Email</label>
+        <input type="text" class="form-control" id="person-email" name="email" placeholder="Email" {% if person.email is defined %}value="{{ person.email }}"{% endif %} {{ email_status }}>
+    </div>
+    {#<div class="form-group">#}
+        {#<label for="person-headline">Headline</label>#}
+        {#<input type="text" class="form-control" id="person-headline" name="headline" placeholder="Headline" {% if person.headline is defined %}value="{{ person.headline }}"{% endif %}>#}
+    {#</div>#}
+    {#<div class="form-group">#}
+        {#<label for="person-title">Title</label>#}
+        {#<input type="text" class="form-control" id="person-title" name="title" placeholder="Title" {% if person.title is defined %}value="{{ person.title }}"{% endif %}>#}
+    {#</div>#}
+    {#<div class="form-group">#}
+        {#<label for="person-intro">Introduction</label>#}
+        {#<textarea class="form-control" rows="4" id="person-intro" name="intro" placeholder="Introduction">{% if person.intro is defined %}{{ person.intro }}{% endif %}</textarea>#}
+    {#</div>#}
+    {#<div class="form-group">#}
+        {#<label for="person-start">Start Time</label>#}
+        {#<input type="text" class="form-control" id="person-start" name="start_time" placeholder="Start Time" {% if person.start_time is defined %}value="{{ person.start_time }}"{% endif %}>#}
+    {#</div>#}
+    {#<div class="form-group">#}
+        {#<label for="person-end">End Time</label>#}
+        {#<input type="text" class="form-control" id="person-end" name="end_time" placeholder="End Time" {% if person.end_time is defined %}value="{{ person.end_time }}"{% endif %}>#}
+    {#</div>#}
+
+</div>
