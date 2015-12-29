@@ -30,7 +30,7 @@ class PeopleController extends Controller {
         $output['prev'] = null;
 
         $api = $this->get('nationbuilder.api');
-        $result = $api->getData($request->getSession(), $request, '/api/v1/people', array('limit' => 10));
+        $result = $api->communicate($request, '/api/v1/people', "GET", array('limit' => 10));
 
         if($result !== NULL) {
 

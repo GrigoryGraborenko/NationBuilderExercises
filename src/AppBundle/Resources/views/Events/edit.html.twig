@@ -1,0 +1,17 @@
+{% extends "::base.html.twig" %}
+
+{% block content %}
+    <h1>Edit Event</h1>
+
+    <div class="row">
+
+        <form action="{{ path('edit_event', { id: event.id }) }}" method="post">
+            {{ include('AppBundle:Events:fields.html.twig') }}
+            <button class="btn btn-danger" type="submit">Save</button>
+        </form>
+    </div>
+
+{% endblock content %}
+
+{% block endjavascripts %}
+{% endblock %}

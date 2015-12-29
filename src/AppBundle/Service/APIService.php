@@ -35,16 +35,17 @@ class APIService {
     }
 
     /**
-     * Gets/sends data from the nation builder site
+     * Gets/sends data from the nation builder site - use for GET and DELETE
      *
-     * @param $session
      * @param $request
      * @param $api_call
+     * @param $method
      * @param $params
      * @return null
      */
-    public function getData($session, $request, $api_call, $params) {
+    public function communicate($request, $api_call, $method = "GET", $params = array()) {
 
+        $session = $request->getSession();
         if(!$session->has('oauth_token')) {
             $this->logger->info("No oauth token found");
             return NULL;
@@ -62,13 +63,66 @@ class APIService {
 
         $client = new Client($this->client_id, $this->client_secret);
         $client->setAccessToken($token);
-        $response = $client->fetch($send_url, $params);
 
-        if($response['code'] === '200') {
+        $response = $client->fetch($send_url, $params, $method);
+
+        if($response['code'] !== 200) {
             $this->logger->info("Could not retrieve data. Response: " . json_encode($response));
             return NULL;
         }
         return $response['result'];
     }
 
+    /**
+     * Gets/sends data from the nation builder site - use for POST and PUT
+     *
+     * @param $request
+     * @param $api_call
+     * @param $method
+     * @param $params
+     * @return null
+     */
+    public function sendData($request, $api_call, $params, $method = "POST") {
+
+        $session = $request->getSession();
+        if(!$session->has('oauth_token')) {
+            $this->logger->info("No oauth token found");
+            return NULL;
+        }
+        $token = $session->get('oauth_token');
+
+        $send_url = $this->base_url . $api_call;
+
+        $ch = curl_init();
+
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+
+        curl_setopt($ch,CURLOPT_URL, $send_url . "?access_token=$token");
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+
+        if($method === "POST") {
+            curl_setopt($ch, CURLOPT_POST, 1);
+        } else {
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
+        }
+
+        curl_setopt($ch, CURLOPT_POSTFIELDS,     json_encode($params) );
+        curl_setopt($ch, CURLOPT_HTTPHEADER,     array('Content-Type: application/json'));
+
+        $result = curl_exec($ch);
+        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+        if($http_code !== 200) {
+            $this->logger->info("Error code $http_code: $result");
+            return NULL;
+        }
+
+        $json_decode = json_decode($result, true);
+
+        return array(
+            'result' => (null === $json_decode) ? $result : $json_decode,
+            'code' => $http_code
+        );
+    }
 }

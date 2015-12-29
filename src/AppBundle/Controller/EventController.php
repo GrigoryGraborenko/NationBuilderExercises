@@ -9,6 +9,7 @@
 namespace AppBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -27,7 +28,7 @@ class EventController extends Controller {
 
         $api = $this->get('nationbuilder.api');
         $slug = $this->getParameter('nationbuilder.slug');
-        $result = $api->getData($request->getSession(), $request, "/api/v1/sites/$slug/pages/events", array('limit' => 10));
+        $result = $api->communicate($request, "/api/v1/sites/$slug/pages/events", "GET", array('limit' => 10));
 
         if($result !== NULL) {
 
@@ -45,6 +46,126 @@ class EventController extends Controller {
         }
 
         return $this->render('AppBundle:Core:events.html.twig', $output);
+    }
+
+    /**
+     * @Route("/event/delete/{id}", name="delete_event")
+     * @Method("GET")
+     */
+    public function deleteEventAction(Request $request, $id) {
+
+        $api = $this->get('nationbuilder.api');
+        $slug = $this->getParameter('nationbuilder.slug');
+        $result = $api->communicate($request, "/api/v1/sites/$slug/pages/events/$id", "DELETE");
+
+        if($result === NULL) {
+            $this->get('logger')->info("Could not delete event #$id");
+//            return $this->render('AppBundle:Core:index.html.twig', array('location' => 'home'));
+
+//            $this->getSession()->
+//            return $this->redirectToRoute('events');
+        }
+
+        return $this->redirectToRoute('events');
+    }
+
+    /**
+     * @Route("/event/create", name="create_event_form")
+     * @Method("GET")
+     */
+    public function newEventFormAction(Request $request) {
+
+        $output = array();
+
+//        $output = array('event' => array(
+//            'name' => "thing"
+//            ,'title' => "something"
+//            ,'headline' => "something will happen"
+//            ,'intro' => "woah"
+//            ,'start_time' => "2017-02-25T12:00:00+10:00"
+//            ,'end_time' => "2017-02-25T15:00:00+10:00"
+//        ));
+
+        return $this->render('AppBundle:Events:create.html.twig', $output);
+    }
+
+    /**
+     * @Route("/event/create", name="create_event")
+     * @Method("POST")
+     */
+    public function newEventAction(Request $request) {
+
+        $params = $request->request->all();
+
+        $send_data = array(
+            "status" => "unlisted"
+            ,'name' => $params['name']
+            ,'title' => $params['title']
+            ,'headline' => $params['headline']
+            ,'intro' => $params['intro']
+            ,'start_time' => $params['start_time']
+            ,'end_time' => $params['end_time']
+        );
+
+//        $this->get('logger')->info("PARAMS " . json_encode($params));
+//        $this->get('logger')->info("SEND " . json_encode($send_data));
+
+        $api = $this->get('nationbuilder.api');
+        $slug = $this->getParameter('nationbuilder.slug');
+        $result = $api->sendData($request, "/api/v1/sites/$slug/pages/events", array('event' => $send_data), "POST");
+
+        if($result === NULL) {
+            $this->get('logger')->info("Error - could not create event");
+        }
+
+        return $this->redirectToRoute('events');
+    }
+
+    /**
+     * @Route("/event/edit/{id}", name="edit_event_form")
+     * @Method("GET")
+     */
+    public function editEventFormAction(Request $request, $id) {
+
+        $api = $this->get('nationbuilder.api');
+        $slug = $this->getParameter('nationbuilder.slug');
+        $result = $api->communicate($request, "/api/v1/sites/$slug/pages/events/$id", "GET");
+
+        if($result === NULL) {
+            return $this->redirectToRoute('events');
+        }
+
+        return $this->render('AppBundle:Events:edit.html.twig', array('event' => $result['event']));
+    }
+
+    /**
+     * @Route("/event/edit/{id}", name="edit_event")
+     * @Method("POST")
+     */
+    public function editEventAction(Request $request, $id) {
+
+        $params = $request->request->all();
+
+        $send_data = array(
+            "status" => "unlisted"
+            ,'name' => $params['name']
+            ,'title' => $params['title']
+            ,'headline' => $params['headline']
+            ,'intro' => $params['intro']
+            ,'start_time' => $params['start_time']
+            ,'end_time' => $params['end_time']
+        );
+
+        $api = $this->get('nationbuilder.api');
+        $slug = $this->getParameter('nationbuilder.slug');
+        $result = $api->sendData($request, "/api/v1/sites/$slug/pages/events/$id", array('event' => $send_data), "PUT");
+
+        if($result === NULL) {
+            $this->get('logger')->info("Error - could not update event");
+            return $this->redirectToRoute('edit_event_form', array('id' => $id));
+        }
+
+        return $this->redirectToRoute('events');
     }
 
 }
