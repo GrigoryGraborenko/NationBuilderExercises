@@ -35,7 +35,7 @@ class APIService {
     }
 
     /**
-     * Gets/sends data from the nation builder site
+     * Gets/sends data from the nation builder site - use for GET and DELETE
      *
      * @param $request
      * @param $api_call
@@ -74,7 +74,7 @@ class APIService {
     }
 
     /**
-     * Gets/sends data from the nation builder site
+     * Gets/sends data from the nation builder site - use for POST and PUT
      *
      * @param $request
      * @param $api_call
@@ -99,8 +99,14 @@ class APIService {
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
 
         curl_setopt($ch,CURLOPT_URL, $send_url . "?access_token=$token");
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1 );
-        curl_setopt($ch, CURLOPT_POST,           1 );
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+
+        if($method === "POST") {
+            curl_setopt($ch, CURLOPT_POST, 1);
+        } else {
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
+        }
+
         curl_setopt($ch, CURLOPT_POSTFIELDS,     json_encode($params) );
         curl_setopt($ch, CURLOPT_HTTPHEADER,     array('Content-Type: application/json'));
 
@@ -118,8 +124,5 @@ class APIService {
             'result' => (null === $json_decode) ? $result : $json_decode,
             'code' => $http_code
         );
-
     }
-
-
 }

@@ -146,20 +146,26 @@ class EventController extends Controller {
 
         $params = $request->request->all();
 
+        $send_data = array(
+            "status" => "unlisted"
+            ,'name' => $params['name']
+            ,'title' => $params['title']
+            ,'headline' => $params['headline']
+            ,'intro' => $params['intro']
+            ,'start_time' => $params['start_time']
+            ,'end_time' => $params['end_time']
+        );
 
-//        $this->get('logger')->info("PARAMS ($id) " . json_encode($params));
+        $api = $this->get('nationbuilder.api');
+        $slug = $this->getParameter('nationbuilder.slug');
+        $result = $api->sendData($request, "/api/v1/sites/$slug/pages/events/$id", array('event' => $send_data), "PUT");
 
+        if($result === NULL) {
+            $this->get('logger')->info("Error - could not update event");
+            return $this->redirectToRoute('edit_event_form', array('id' => $id));
+        }
 
         return $this->redirectToRoute('events');
-//        $api = $this->get('nationbuilder.api');
-//        $slug = $this->getParameter('nationbuilder.slug');
-//        $result = $api->getData($request->getSession(), $request, "/api/v1/sites/$slug/pages/events/$id");
-//
-//        if($result === NULL) {
-//            return $this->redirectToRoute('events');
-//        }
-//
-//        return $this->render('AppBundle:Events:edit.html.twig', array('event' => $result['event']));
     }
 
 }
